@@ -1,0 +1,13 @@
+[package]
+name = "vocalyrics"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.95"
+reqwest = "0.12.12"
+scraper = "0.22.0"
+
+[features]
+default = ["atwiki"]
+atwiki = []
