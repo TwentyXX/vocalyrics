@@ -5,7 +5,7 @@ use scraper;
 pub(crate) async fn search_song_url_in_atwiki(query: &str) -> anyhow::Result<String> {
 	use anyhow::bail;
 
-	use crate::search::url::build_search_url;
+	use crate::search_page::url::build_search_url;
 	let selector_str = "a[title][href^='/hmiku/?cmd=word']".to_owned();
 	let selector = scraper::Selector::parse(&selector_str).unwrap();
 	let url = build_search_url(query);
