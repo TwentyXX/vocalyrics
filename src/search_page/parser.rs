@@ -1,5 +1,3 @@
-use reqwest;
-use scraper;
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
 pub(crate) async fn search_song_url_in_atwiki(query: &str) -> anyhow::Result<String> {
