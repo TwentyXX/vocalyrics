@@ -1,1 +1,1 @@
-mod scraper;
+pub(crate) mod scraper;
