@@ -1,4 +1,3 @@
-
 pub(crate) fn build_search_url(query: &str) -> String {
 	format!(
 		"https://w.atwiki.jp/hmiku/search?andor=and&keyword={}",
