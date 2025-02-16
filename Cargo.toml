@@ -3,6 +3,9 @@ name = "vocalolyrics"
 version = "0.1.0"
 edition = "2024"
 license = "GPL-3.0"
+description = """Lyrics scraper, primarily for Vocaloid content.
+By default, atwiki is used as the source.
+We plan to make other sources selectable, but that is not currently possible."""
 
 [dependencies]
 anyhow = "1.0.95"
