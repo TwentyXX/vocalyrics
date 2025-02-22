@@ -4,7 +4,7 @@ const LYRICS_SELECTOR: &str =
 
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
-pub(crate) async fn parse_song_atwiki(url: &str) -> Result<Vec<String>, LyricsFetchError> {
+pub(crate) async fn fetch_lyrics_from_atwiki(url: &str) -> Result<Vec<String>, LyricsFetchError> {
 	use crate::helpers::{build_client_with_auto_ua, fetch_document, parse_selector};
 
 	let client = build_client_with_auto_ua();
@@ -21,9 +21,9 @@ pub(crate) async fn parse_song_atwiki(url: &str) -> Result<Vec<String>, LyricsFe
 }
 
 #[tokio::test]
-async fn test_parse_song_atwiki() {
+async fn test_fetch_lyrics_from_atwiki() {
 	let url = "https://w.atwiki.jp/hmiku/pages/38863.html";
-	let result = parse_song_atwiki(url).await;
+	let result = fetch_lyrics_from_atwiki(url).await;
 	dbg!(&result);
 	assert!(result.is_ok());
 }
