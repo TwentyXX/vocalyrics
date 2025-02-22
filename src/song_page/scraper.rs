@@ -1,6 +1,5 @@
 use crate::LyricsFetchError;
-const LYRICS_SELECTOR: &str =
-	"h3#id_0a172479 ~ div:has(~ h3):not(:has(a, :not(br, ruby, rt, rb, rp, span)))";
+const LYRICS_SELECTOR: &str = "h3#id_0a172479 ~ div:has(~ h3):not(div[class*='ad']:has(+ h3))";
 
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
@@ -22,7 +21,9 @@ pub(crate) async fn fetch_lyrics_from_atwiki(url: &str) -> Result<Vec<String>, L
 
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
-pub(crate) async fn fetch_lyrics_from_atwiki_html(url: &str) -> Result<Vec<String>, LyricsFetchError> {
+pub(crate) async fn fetch_lyrics_from_atwiki_html(
+	url: &str,
+) -> Result<Vec<String>, LyricsFetchError> {
 	use crate::helpers::{build_client_with_auto_ua, fetch_document, parse_selector};
 
 	let client = build_client_with_auto_ua();
