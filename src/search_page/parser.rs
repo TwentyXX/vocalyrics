@@ -1,11 +1,13 @@
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
-pub(crate) async fn search_song_url_in_atwiki(query: &str) -> anyhow::Result<String> {
-	use anyhow::bail;
-
+use crate::LyricsFetchError;
+pub(crate) async fn search_song_url_in_atwiki(query: &str) -> Result<String, LyricsFetchError> {
 	use crate::search_page::url::build_search_url;
 	let selector_str = "a[title][href^='/hmiku/?cmd=word']".to_owned();
-	let selector = scraper::Selector::parse(&selector_str).unwrap();
+	let selector = scraper::Selector::parse(&selector_str);
+	let Ok(selector) = selector else {
+		return Err(LyricsFetchError::ParseError);
+	};
 	let url = build_search_url(query);
 	// user agent is required to access atwiki
 	let client = reqwest::Client::builder()
@@ -13,9 +15,18 @@ pub(crate) async fn search_song_url_in_atwiki(query: &str) -> anyhow::Result<Str
 			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
 			 Chrome/58.0.3029.110 Safari/537.3",
 		)
-		.build()?;
-	let res = client.get(&url).send().await?;
-	let body = res.text().await?;
+		.build();
+	let Ok(client) = client else {
+		return Err(LyricsFetchError::NetworkError);
+	};
+	let res = client.get(&url).send().await;
+	let Ok(res) = res else {
+		return Err(LyricsFetchError::NetworkError);
+	};
+	let body = res.text().await;
+	let Ok(body) = body else {
+		return Err(LyricsFetchError::NetworkError);
+	};
 	let document = scraper::Html::parse_document(&body);
 	let mut result = None;
 	for element in document.select(&selector) {
@@ -29,7 +40,7 @@ pub(crate) async fn search_song_url_in_atwiki(query: &str) -> anyhow::Result<Str
 	if let Some(result) = result {
 		return Ok(result);
 	};
-	bail!("No result found");
+	Err(LyricsFetchError::NotFound)
 }
 
 #[tokio::test]
