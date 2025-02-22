@@ -23,7 +23,7 @@ pub(crate) async fn parse_song_atwiki(url: &str) -> Result<Vec<String>, LyricsFe
 		return Err(LyricsFetchError::NetworkError);
 	};
 	let document = scraper::Html::parse_document(&body);
-	// 歌詞は複数の要素であり、それらを全て取得する
+	
 	let lyrics = document
 		.select(&scraper::Selector::parse(LYRICS_SELECTOR).unwrap())
 		.map(|element| element.text().collect())
