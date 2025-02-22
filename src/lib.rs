@@ -1,6 +1,6 @@
+mod helpers;
 mod search_page;
 mod song_page;
-mod helpers;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LyricsFetchError {

@@ -1,5 +1,3 @@
-use scraper::Selector;
-
 use crate::LyricsFetchError;
 
 pub(crate) async fn fetch_document(
