@@ -1,6 +1,6 @@
 use crate::LyricsFetchError;
 const LYRICS_SELECTOR: &str =
-	"h3#id_0a172479 ~ div:has(~ h3):not(:has(a, :not(br,ruby, rt, rb, rp)))";
+	"h3#id_0a172479 ~ div:has(~ h3):not(:has(a, :not(br, ruby, rt, rb, rp, span)))";
 
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
