@@ -20,10 +20,36 @@ pub(crate) async fn fetch_lyrics_from_atwiki(url: &str) -> Result<Vec<String>, L
 	Ok(lyrics)
 }
 
+#[cfg(feature = "atwiki")]
+#[cfg(feature = "async")]
+pub(crate) async fn fetch_lyrics_from_atwiki_html(url: &str) -> Result<Vec<String>, LyricsFetchError> {
+	use crate::helpers::{build_client_with_auto_ua, fetch_document, parse_selector};
+
+	let client = build_client_with_auto_ua();
+	let document = fetch_document(client, url).await?;
+
+	let selector = parse_selector(LYRICS_SELECTOR)?;
+
+	let lyrics = document
+		.select(&selector)
+		.map(|element| element.html())
+		.collect();
+
+	Ok(lyrics)
+}
+
 #[tokio::test]
 async fn test_fetch_lyrics_from_atwiki() {
 	let url = "https://w.atwiki.jp/hmiku/pages/38863.html";
 	let result = fetch_lyrics_from_atwiki(url).await;
+	dbg!(&result);
+	assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_fetch_lyrics_from_atwiki_html() {
+	let url = "https://w.atwiki.jp/hmiku/pages/38863.html";
+	let result = fetch_lyrics_from_atwiki_html(url).await;
 	dbg!(&result);
 	assert!(result.is_ok());
 }
