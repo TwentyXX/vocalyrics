@@ -5,33 +5,15 @@ const LYRICS_SELECTOR: &str =
 #[cfg(feature = "atwiki")]
 #[cfg(feature = "async")]
 pub(crate) async fn parse_song_atwiki(url: &str) -> Result<Vec<String>, LyricsFetchError> {
-	let client = reqwest::Client::builder()
-		.user_agent(
-			"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
-			 Chrome/58.0.3029.110 Safari/537.3",
-		)
-		.build();
-	let Ok(client) = client else {
-		return Err(LyricsFetchError::NetworkError);
-	};
-	let res = client.get(url).send().await;
-	let Ok(res) = res else {
-		return Err(LyricsFetchError::NetworkError);
-	};
-	let body = res.text().await;
-	let Ok(body) = body else {
-		return Err(LyricsFetchError::NetworkError);
-	};
-	let document = scraper::Html::parse_document(&body);
+	use crate::helpers::{build_client_with_auto_ua, fetch_document, parse_selector};
 
-	let selector = &scraper::Selector::parse(LYRICS_SELECTOR);
+	let client = build_client_with_auto_ua();
+	let document = fetch_document(client, url).await?;
 
-	let Ok(selector) = selector else {
-		return Err(LyricsFetchError::SelectorError);
-	};
+	let selector = parse_selector(LYRICS_SELECTOR)?;
 
 	let lyrics = document
-		.select(selector)
+		.select(&selector)
 		.map(|element| element.text().collect())
 		.collect();
 
