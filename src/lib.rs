@@ -6,6 +6,7 @@ pub enum LyricsFetchError {
 	NotFound,
 	NetworkError,
 	ParseError,
+	SelectorError,
 }
 
 pub async fn fetch_vocaloid_lyrics(title: &str) -> Result<Vec<String>, LyricsFetchError> {

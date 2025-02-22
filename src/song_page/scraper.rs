@@ -23,9 +23,15 @@ pub(crate) async fn parse_song_atwiki(url: &str) -> Result<Vec<String>, LyricsFe
 		return Err(LyricsFetchError::NetworkError);
 	};
 	let document = scraper::Html::parse_document(&body);
-	
+
+	let selector = &scraper::Selector::parse(LYRICS_SELECTOR);
+
+	let Ok(selector) = selector else {
+		return Err(LyricsFetchError::SelectorError);
+	};
+
 	let lyrics = document
-		.select(&scraper::Selector::parse(LYRICS_SELECTOR).unwrap())
+		.select(selector)
 		.map(|element| element.text().collect())
 		.collect();
 

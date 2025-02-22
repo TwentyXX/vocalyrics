@@ -32,7 +32,10 @@ pub(crate) async fn search_song_url_in_atwiki(query: &str) -> Result<String, Lyr
 	for element in document.select(&selector) {
 		let text = element.text().collect::<String>();
 		if text.contains(query) {
-			let href = element.value().attr("href").unwrap();
+			let href = element.value().attr("href");
+			let Some(href) = href else {
+				continue;
+			};
 			result = Some(format!("https://w.atwiki.jp{}", href));
 			break;
 		}
