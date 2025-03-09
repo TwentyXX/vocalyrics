@@ -29,3 +29,12 @@ async fn test_fetch_vocaloid_lyrics() {
 	dbg!(&lyrics);
 	assert!(lyrics.is_ok());
 }
+
+
+#[tokio::test]
+async fn test_search_atwiki_with_contain_title_in_lyrics() {
+	let search_word = "ルカルカ★ナイトフィーバー";
+	let lyrics = fetch_vocaloid_lyrics_html(search_word).await;
+	dbg!(&lyrics);
+	assert!(lyrics.is_ok());
+}
