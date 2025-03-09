@@ -11,20 +11,32 @@ pub(crate) async fn search_song_url_in_atwiki(query: &str) -> Result<String, Lyr
 	// user agent is required to access atwiki
 	let client = build_client_with_auto_ua();
 
-	let url = build_search_url(query);
+	let url_string = build_search_url(query);
 
-	let document = fetch_document(client, &url).await?;
+	let document = fetch_document(client, &url_string).await?;
 
-	let result = document
+	let Some(result) = document
 		.select(&selector)
 		.find(|element| element.text().collect::<String>().contains(query))
 		.and_then(|element| element.value().attr("href"))
-		.map(|href| format!("https://w.atwiki.jp{}", href));
+		.map(|href| {
+			let base_url = "https://w.atwiki.jp";
+			let full_url = format!("{}{}", base_url, href);
+			let Ok(parsed_url) = reqwest::Url::parse(&full_url) else {
+				return Err(LyricsFetchError::ParseError);
+			};
+			let Some(pageid) = parsed_url.query_pairs().find(|(key, _)| key == "pageid") else {
+				return Err(LyricsFetchError::ParseError);
+			};
 
-	if let Some(result) = result {
-		return Ok(result);
+			let pageid = pageid.1.to_string();
+			let new_url = format!("https://w.atwiki.jp/hmiku/pages/{}.html", pageid);
+			Ok(new_url)
+		})
+	else {
+		return Err(LyricsFetchError::NotFound);
 	};
-	Err(LyricsFetchError::NotFound)
+	return result;
 }
 
 #[tokio::test]
